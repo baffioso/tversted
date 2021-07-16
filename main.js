@@ -13,8 +13,14 @@ map.addControl(
         positionOptions: {
             enableHighAccuracy: true
         },
+        fitBoundsOptions: { maxZoom: 19 },
         trackUserLocation: true
-    })
+    }),
+    'bottom-right'
+);
+
+map.addControl(new mapboxgl.FullscreenControl(),
+    'bottom-right'
 );
 
 map.on('load', function () {
@@ -30,6 +36,11 @@ map.on('load', function () {
     });
 
 
+    map.addSource('mose', {
+        'type': 'geojson',
+        'data': './data/mose.geojson'
+    });
+
     // // Add a new layer to visualize the polygon.
     map.addLayer({
         'id': 'bygning',
@@ -38,7 +49,18 @@ map.on('load', function () {
         'layout': {},
         'paint': {
             'fill-color': 'green', // blue color fill
-            'fill-opacity': 1
+            'fill-opacity': 0.6
+        }
+    });
+
+    map.addLayer({
+        'id': 'mose',
+        'type': 'fill',
+        'source': 'mose', // reference the data source
+        'layout': {},
+        'paint': {
+            'fill-color': 'brown', // blue color fill
+            'fill-opacity': 0.6
         }
     });
 

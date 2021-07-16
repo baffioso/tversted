@@ -8,3 +8,8 @@ html, body {
     height: 100%;
     width: 100%;
 }
+
+.mapboxgl-ctrl-group button {
+    height: 40px;
+    width: 40px;
+}
