@@ -7,9 +7,21 @@ html, body {
 #map {
     height: 100%;
     width: 100%;
+    position: absolute;
 }
 
 .mapboxgl-ctrl-group button {
     height: 40px;
     width: 40px;
+}
+
+#toggle-layer {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 8px;
+    cursor: pointer;
+    z-index: 10;
 }

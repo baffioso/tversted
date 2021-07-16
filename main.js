@@ -1,3 +1,5 @@
+let satellite = true
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiYmFmZmlvc28iLCJhIjoiT1JTS1lIMCJ9.f5ubY91Bi42yPnTrgiq-Gw';
 
 var map = new mapboxgl.Map({
@@ -19,11 +21,23 @@ map.addControl(
     'bottom-right'
 );
 
-map.addControl(new mapboxgl.FullscreenControl(),
+map.addControl(
+    new mapboxgl.FullscreenControl(),
     'bottom-right'
 );
 
-map.on('load', function () {
+map.on('load', () => {
+
+    // console.log(map.getStyle().layers)
+    //const firstSymbolId = map.getStyle().layers.find(layer => layer.type === 'symbol').id;
+
+    // map.addSource('dem', {
+    //     'type': 'raster',
+    //     'tiles': [
+    //         'https://tiles.baffioso.dk/data/tversted/{z}/{x}/{y}.png'
+    //     ],
+    //     'tileSize': 256
+    // })
     // Add a data source containing GeoJSON data.
     map.addSource('matrikel', {
         'type': 'geojson',
@@ -40,6 +54,24 @@ map.on('load', function () {
         'type': 'geojson',
         'data': './data/mose.geojson'
     });
+
+    map.addSource('vej', {
+        'type': 'geojson',
+        'data': './data/vej.geojson'
+    });
+
+    // map.addLayer(
+    //     {
+    //         id: 'dem',
+    //         type: 'raster',
+    //         source: 'dem',
+    //         paint: {
+    //             'raster-opacity': 1
+    //         },
+    //         layout: {
+    //             visibility: 'visible'
+    //         }
+    //     });
 
     // // Add a new layer to visualize the polygon.
     map.addLayer({
@@ -64,9 +96,11 @@ map.on('load', function () {
         }
     });
 
+
+
     // Add a black outline around the polygon.
     map.addLayer({
-        'id': 'outline',
+        'id': 'matrikel',
         'type': 'line',
         'source': 'matrikel',
         'layout': {},
@@ -75,4 +109,59 @@ map.on('load', function () {
             'line-width': 2
         }
     });
+
+    map.addLayer({
+        'id': 'vej',
+        'type': 'symbol',
+        'source': 'vej',
+        "layout": {
+            "symbol-placement": "line",
+            "text-anchor": "center",
+            "text-field": "{navn}",
+            "text-offset": [0, 0.15],
+            "text-size": {
+                "base": 1,
+                "stops": [[13, 12], [14, 13]]
+            }
+        },
+        "paint": {
+            "text-color": "white",
+            "text-halo-blur": 0.5,
+            "text-halo-width": 1,
+            "text-halo-color": "rgba(0, 0, 0, 1)"
+
+        }
+    });
 });
+
+// const toggleLayer = () => {
+//     console.log('OI')
+//     if (satellite) {
+//         satellite = false;
+//         map.removeLayer('satellite');
+//         map.addLayer('dem')
+//     } else {
+//         satellite = true;
+//         map.removeLayer('dem');
+//         map.addLayer('satelite')
+//     }
+// }
+
+// class MyCustomControl {
+//     onAdd(map) {
+//         this.map = map;
+//         this._btn = document.createElement('button');
+//         this._btn.className = "mapboxgl-ctrl-icon" + " " + "toggle-baselayer";
+//         // this._btn.className = 'toggle-baselayer';
+//         this._btn.textContent = 'Skift baggrundskort';
+//         return this._btn;
+//     }
+//     onRemove() {
+//         this._btn.parentNode.removeChild(this._btn);
+//         this.map = undefined;
+//     }
+// }
+
+// const myCustomControl = new MyCustomControl();
+
+// map.addControl(myCustomControl);
