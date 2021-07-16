@@ -28,16 +28,6 @@ map.addControl(
 
 map.on('load', () => {
 
-    // console.log(map.getStyle().layers)
-    //const firstSymbolId = map.getStyle().layers.find(layer => layer.type === 'symbol').id;
-
-    // map.addSource('dem', {
-    //     'type': 'raster',
-    //     'tiles': [
-    //         'https://tiles.baffioso.dk/data/tversted/{z}/{x}/{y}.png'
-    //     ],
-    //     'tileSize': 256
-    // })
     // Add a data source containing GeoJSON data.
     map.addSource('matrikel', {
         'type': 'geojson',
@@ -55,23 +45,15 @@ map.on('load', () => {
         'data': './data/mose.geojson'
     });
 
-    map.addSource('vej', {
+    map.addSource('vejstykke', {
         'type': 'geojson',
-        'data': './data/vej.geojson'
+        'data': './data/vejstykke.geojson'
     });
 
-    // map.addLayer(
-    //     {
-    //         id: 'dem',
-    //         type: 'raster',
-    //         source: 'dem',
-    //         paint: {
-    //             'raster-opacity': 1
-    //         },
-    //         layout: {
-    //             visibility: 'visible'
-    //         }
-    //     });
+    map.addSource('vejmidte', {
+        'type': 'geojson',
+        'data': './data/vejmidte.geojson'
+    });
 
     // // Add a new layer to visualize the polygon.
     map.addLayer({
@@ -96,8 +78,6 @@ map.on('load', () => {
         }
     });
 
-
-
     // Add a black outline around the polygon.
     map.addLayer({
         'id': 'matrikel',
@@ -112,8 +92,20 @@ map.on('load', () => {
 
     map.addLayer({
         'id': 'vej',
+        'type': 'line',
+        'source': 'vejmidte',
+        'layout': {},
+        'paint': {
+            'line-color': 'white',
+            'line-width': 3,
+            'line-opacity': 0.6
+        }
+    });
+
+    map.addLayer({
+        'id': 'vejnavn',
         'type': 'symbol',
-        'source': 'vej',
+        'source': 'vejstykke',
         "layout": {
             "symbol-placement": "line",
             "text-anchor": "center",
@@ -165,3 +157,26 @@ map.on('load', () => {
 // const myCustomControl = new MyCustomControl();
 
 // map.addControl(myCustomControl);
+
+    // map.addLayer(
+    //     {
+    //         id: 'dem',
+    //         type: 'raster',
+    //         source: 'dem',
+    //         paint: {
+    //             'raster-opacity': 1
+    //         },
+    //         layout: {
+    //             visibility: 'visible'
+    //         }
+    //     });
+    // console.log(map.getStyle().layers)
+    //const firstSymbolId = map.getStyle().layers.find(layer => layer.type === 'symbol').id;
+
+    // map.addSource('dem', {
+    //     'type': 'raster',
+    //     'tiles': [
+    //         'https://tiles.baffioso.dk/data/tversted/{z}/{x}/{y}.png'
+    //     ],
+    //     'tileSize': 256
+    // })
