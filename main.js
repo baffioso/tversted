@@ -4,7 +4,32 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiYmFmZmlvc28iLCJhIjoiT1JTS1lIMCJ9.f5ubY91Bi42y
 
 var map = new mapboxgl.Map({
     container: 'map', // container ID
-    style: 'mapbox://styles/mapbox/satellite-v9', // style URL
+    style: {
+        version: 8,
+        glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+        sources: {
+            orto: {
+                type: 'raster',
+                tiles: [
+                    'https://services.datafordeler.dk/GeoDanmarkOrto/orto_foraar/1.0.0/WMS?username=DTMMBNXGMB&password=LvA$*001&VERSION=1.1.1&REQUEST=GetMap&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=orto_foraar&STYLES=&FORMAT=image/jpeg'
+                ],
+                tileSize: 256
+            }
+        },
+        layers: [
+            {
+                id: 'orto',
+                type: 'raster',
+                source: 'orto',
+                paint: {
+                    'raster-opacity': 1
+                },
+                layout: {
+                    visibility: 'visible'
+                }
+            }
+        ]
+    },
     center: [10.226000, 57.598860], // starting position [lng, lat]
     zoom: 16, // starting zoom
     hash: true
@@ -34,7 +59,6 @@ const updateDrawing = (e) => {
         data.features = data.features.map(i => {
             return { ...i, properties: { length: Math.round(turf.length(i.geometry) * 1000) } }
         })
-        console.log(data)
         addLineLength(data)
     } else {
         if (e.type === 'draw.delete' && data.features.length === 0) {
@@ -63,8 +87,8 @@ const addLineLength = (lineString) => {
         type: 'symbol',
         source: 'measure-line-length',
         "layout": {
-            "text-field": ["get", "length"],
-            "text-size": 17,
+            "text-field": ['concat', ["get", "length"], ' m'],
+            "text-size": 18,
             "symbol-placement": "line-center",
             "text-rotation-alignment": "map",
             "text-keep-upright": true
@@ -85,31 +109,20 @@ draw = new MapboxDraw({
         line_string: true
     }
 })
-map.addControl(draw, 'top-left');
-map.on('draw.create', updateDrawing);
-map.on('draw.delete', updateDrawing);
-map.on('draw.update', updateDrawing);
 
 map.on('load', () => {
-    // Add a data source containing GeoJSON data.
-    map.addSource('matrikel', {
-        'type': 'geojson',
-        'data': './data/matrikel.geojson'
-    });
 
-    map.addSource('bygning', {
-        'type': 'geojson',
-        'data': './data/bygning.geojson'
-    });
+    // Add dawa sources
+    ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
+        map.addSource(source, {
+            'type': 'geojson',
+            'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
+        });
+    })
 
     map.addSource('mose', {
         'type': 'geojson',
         'data': './data/mose.geojson'
-    });
-
-    map.addSource('vejstykke', {
-        'type': 'geojson',
-        'data': './data/vejstykke.geojson'
     });
 
     map.addSource('vejmidte', {
@@ -117,16 +130,10 @@ map.on('load', () => {
         'data': './data/vejmidte.geojson'
     });
 
-    map.addSource('adresse', {
-        'type': 'geojson',
-        'data': './data/adresse.geojson'
-    });
-
-    // // Add a new layer to visualize the polygon.
     map.addLayer({
-        'id': 'bygning',
+        'id': 'bygninger',
         'type': 'fill',
-        'source': 'bygning', // reference the data source
+        'source': 'bygninger', // reference the data source
         'layout': {},
         'paint': {
             'fill-color': 'green', // blue color fill
@@ -147,9 +154,9 @@ map.on('load', () => {
 
     // Add a black outline around the polygon.
     map.addLayer({
-        'id': 'matrikel',
+        'id': 'jordstykker',
         'type': 'line',
-        'source': 'matrikel',
+        'source': 'jordstykker',
         'layout': {},
         'paint': {
             'line-color': 'red',
@@ -172,7 +179,7 @@ map.on('load', () => {
     map.addLayer({
         'id': 'vejnavn',
         'type': 'symbol',
-        'source': 'vejstykke',
+        'source': 'vejstykker',
         "layout": {
             "symbol-placement": "line",
             "text-anchor": "center",
@@ -193,9 +200,9 @@ map.on('load', () => {
     });
 
     map.addLayer({
-        'id': 'adresse',
+        'id': 'husnr',
         'type': 'symbol',
-        'source': 'adresse',
+        'source': 'adgangsadresser',
         "layout": {
             "text-field": "{husnr}",
             "text-size": 10
@@ -208,59 +215,9 @@ map.on('load', () => {
 
         }
     });
+
+    map.addControl(draw, 'top-left');
+    map.on('draw.create', updateDrawing);
+    map.on('draw.delete', updateDrawing);
+    map.on('draw.update', updateDrawing);
 });
-
-// const toggleLayer = () => {
-//     console.log('OI')
-//     if (satellite) {
-//         satellite = false;
-//         map.removeLayer('satellite');
-//         map.addLayer('dem')
-//     } else {
-//         satellite = true;
-//         map.removeLayer('dem');
-//         map.addLayer('satelite')
-//     }
-// }
-
-// class MyCustomControl {
-//     onAdd(map) {
-//         this.map = map;
-//         this._btn = document.createElement('button');
-//         this._btn.className = "mapboxgl-ctrl-icon" + " " + "toggle-baselayer";
-//         // this._btn.className = 'toggle-baselayer';
-//         this._btn.textContent = 'Skift baggrundskort';
-//         return this._btn;
-//     }
-//     onRemove() {
-//         this._btn.parentNode.removeChild(this._btn);
-//         this.map = undefined;
-//     }
-// }
-
-// const myCustomControl = new MyCustomControl();
-
-// map.addControl(myCustomControl);
-
-    // map.addLayer(
-    //     {
-    //         id: 'dem',
-    //         type: 'raster',
-    //         source: 'dem',
-    //         paint: {
-    //             'raster-opacity': 1
-    //         },
-    //         layout: {
-    //             visibility: 'visible'
-    //         }
-    //     });
-    // console.log(map.getStyle().layers)
-    //const firstSymbolId = map.getStyle().layers.find(layer => layer.type === 'symbol').id;
-
-    // map.addSource('dem', {
-    //     'type': 'raster',
-    //     'tiles': [
-    //         'https://tiles.baffioso.dk/data/tversted/{z}/{x}/{y}.png'
-    //     ],
-    //     'tileSize': 256
-    // })
