@@ -6,7 +6,8 @@ var map = new mapboxgl.Map({
     container: 'map', // container ID
     style: 'mapbox://styles/mapbox/satellite-v9', // style URL
     center: [10.226000, 57.598860], // starting position [lng, lat]
-    zoom: 16 // starting zoom
+    zoom: 16, // starting zoom
+    hash: true
 });
 
 // Add geolocate control to the map.
@@ -26,8 +27,69 @@ map.addControl(
     'bottom-right'
 );
 
-map.on('load', () => {
+const updateDrawing = (e) => {
+    // var style = map.getStyle().layers;
+    // console.log(e, style)
+    var data = draw.getAll();
+    if (data.features.length > 0) {
+        data.features = data.features.map(i => {
+            return { ...i, properties: { length: Math.round(turf.length(i.geometry) * 1000) } }
+        })
+        console.log(data)
+        // var length = Math.round(turf.length(data) * 1000);
+        addLineLength(data)
+        // map.setPaintProperty('gl-draw-line-inactive.hot', 'line-color', 'red');
+    } else {
+        if (e.type !== 'draw.delete')
+            alert('Click the map to draw a polygon.');
+    }
 
+}
+
+const addLineLength = (lineString) => {
+    if (map.getLayer('measure-line-length')) {
+        map.removeLayer('measure-line-length')
+        map.removeSource('measure-line-length')
+    }
+
+    map.addSource('measure-line-length', {
+        type: 'geojson',
+        data: lineString
+    })
+
+    map.addLayer({
+        id: 'measure-line-length',
+        type: 'symbol',
+        source: 'measure-line-length',
+        "layout": {
+            "text-field": ["get", "length"],
+            "text-size": 17,
+            "symbol-placement": "line-center",
+            "text-rotation-alignment": "map",
+            "text-keep-upright": true
+        },
+        "paint": {
+            "text-color": "rgba(247, 247, 247, 1)",
+            "text-halo-width": 1,
+            "text-halo-color": "black"
+        }
+    })
+}
+
+draw = new MapboxDraw({
+    displayControlsDefault: false,
+    controls: {
+        //polygon: true,
+        trash: true,
+        line_string: true
+    }
+})
+map.addControl(draw, 'top-left');
+map.on('draw.create', updateDrawing);
+map.on('draw.delete', updateDrawing);
+map.on('draw.update', updateDrawing);
+
+map.on('load', () => {
     // Add a data source containing GeoJSON data.
     map.addSource('matrikel', {
         'type': 'geojson',
@@ -38,7 +100,6 @@ map.on('load', () => {
         'type': 'geojson',
         'data': './data/bygning.geojson'
     });
-
 
     map.addSource('mose', {
         'type': 'geojson',
