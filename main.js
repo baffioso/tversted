@@ -171,7 +171,27 @@ draw = new MapboxDraw({
 map.on('load', () => {
 
     map.on('click', 'jordstykker_fill', (e) => {
-        console.log(e.features[0].properties)
+
+        const areal = e.features[0].properties.registreretareal;
+        const matnr = e.features[0].properties.matrikelnr;
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`
+            <table>
+                <tr>
+                    <td><b>Matrikelnummer:</b></td>
+                    <td>${matnr}</td>
+                </tr>
+                <tr>
+                    <td><b>Registreret areal:</b></td>
+                    <td>${areal}</td>
+            </tr>
+            <table>
+            `)
+            .addTo(map);
+    });
+
+    map.on('touchend', 'jordstykker_fill', (e) => {
 
         const areal = e.features[0].properties.registreretareal;
         const matnr = e.features[0].properties.matrikelnr;
