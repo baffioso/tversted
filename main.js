@@ -170,44 +170,44 @@ draw = new MapboxDraw({
 
 map.on('load', () => {
 
-    map.on('click', 'jordstykker_fill', (e) => {
+    // map.on('click', 'jordstykker_fill', (e) => {
 
-        const areal = e.features[0].properties.registreretareal;
-        const matnr = e.features[0].properties.matrikelnr;
-        new mapboxgl.Popup()
-            .setLngLat(e.lngLat)
-            .setHTML(`
-            <table>
-                <tr>
-                    <td><b>Matrikelnummer:</b></td>
-                    <td>${matnr}</td>
-                </tr>
-                <tr>
-                    <td><b>Registreret areal:</b></td>
-                    <td>${areal}</td>
-            </tr>
-            <table>
-            `)
-            .addTo(map);
-    });
+    //     const areal = e.features[0].properties.registreretareal;
+    //     const matnr = e.features[0].properties.matrikelnr;
+    //     new mapboxgl.Popup()
+    //         .setLngLat(e.lngLat)
+    //         .setHTML(`
+    //         <table>
+    //             <tr>
+    //                 <td><b>Matrikelnummer:</b></td>
+    //                 <td>${matnr}</td>
+    //             </tr>
+    //             <tr>
+    //                 <td><b>Registreret areal:</b></td>
+    //                 <td>${areal}</td>
+    //         </tr>
+    //         <table>
+    //         `)
+    //         .addTo(map);
+    // });
 
     // Change the cursor to a pointer when the mouse is over the places layer.
-    map.on('mouseenter', 'jordstykker_fill', function () {
-        map.getCanvas().style.cursor = 'pointer';
-    });
+    // map.on('mouseenter', 'jordstykker_fill', function () {
+    //     map.getCanvas().style.cursor = 'pointer';
+    // });
 
-    // Change it back to a pointer when it leaves.
-    map.on('mouseleave', 'jordstykker_fill', function () {
-        map.getCanvas().style.cursor = '';
-    });
+    // // Change it back to a pointer when it leaves.
+    // map.on('mouseleave', 'jordstykker_fill', function () {
+    //     map.getCanvas().style.cursor = '';
+    // });
 
-    // Add dawa sources
-    ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
-        map.addSource(source, {
-            'type': 'geojson',
-            'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
-        });
-    })
+    // // Add dawa sources
+    // ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
+    //     map.addSource(source, {
+    //         'type': 'geojson',
+    //         'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
+    //     });
+    // })
 
     map.addSource('mose', {
         'type': 'geojson',
