@@ -59,23 +59,77 @@ map.addControl(
 const updateDrawing = (e) => {
     let data = draw.getAll();
 
-    if (data.features.length > 0) {
-        data.features = data.features.map(i => {
-            return { ...i, properties: { length: Math.round(turf.length(i.geometry) * 1000) } }
+    let line = data.features.filter(feature => feature.geometry.type === 'LineString')
+    let polygon = data.features.filter(feature => feature.geometry.type === 'Polygon')
+
+    if (line.length > 0) {
+        const lineString = line.map(feature => {
+            return { ...feature, properties: { measure: Math.round(turf.length(feature.geometry) * 1000) } }
         })
-        addLineLength(data)
-    } else {
-        if (e.type === 'draw.delete' && data.features.length === 0) {
-            if (map.getLayer('measure-line-length')) {
-                map.removeLayer('measure-line-length')
-                map.removeSource('measure-line-length')
-            }
+
+        addLineLengthLabel({
+            "type": "FeatureCollection",
+            "features": lineString
+        });
+    }
+
+    if (polygon.length > 0) {
+        const polygons = polygon.map(feature => {
+            return { ...feature, properties: { measure: Math.round(turf.area(feature.geometry)) } }
+        })
+
+        addPolygonAreaLabel({
+            "type": "FeatureCollection",
+            "features": polygons
+        });
+    }
+
+    if (e.type === 'draw.delete' && data.features.length === 0) {
+        if (map.getLayer('measure-line-length')) {
+            map.removeLayer('measure-line-length')
+            map.removeSource('measure-line-length')
+        }
+
+        if (map.getLayer('measure-polygon-area')) {
+            map.removeLayer('measure-polygon-area')
+            map.removeSource('measure-polygon-area')
         }
     }
 
 }
 
-const addLineLength = (lineString) => {
+const addPolygonAreaLabel = (polygon) => {
+    if (map.getLayer('measure-polygon-area')) {
+        map.removeLayer('measure-polygon-area')
+        map.removeSource('measure-polygon-area')
+    }
+
+    map.addSource('measure-polygon-area', {
+        type: 'geojson',
+        data: polygon
+    })
+
+    map.addLayer(
+        {
+            "id": "measure-polygon-area",
+            "type": "symbol",
+            "source": "measure-polygon-area",
+            "layout": {
+                "text-field": ['concat', ["get", "measure"], ' m2'],
+                "text-size": 18,
+
+            },
+            "paint": {
+                "text-color": "white",
+                "text-halo-color": "black",
+                "text-halo-width": 1
+            }
+        }
+    )
+
+}
+
+const addLineLengthLabel = (lineString) => {
     if (map.getLayer('measure-line-length')) {
         map.removeLayer('measure-line-length')
         map.removeSource('measure-line-length')
@@ -91,7 +145,7 @@ const addLineLength = (lineString) => {
         type: 'symbol',
         source: 'measure-line-length',
         "layout": {
-            "text-field": ['concat', ["get", "length"], ' m'],
+            "text-field": ['concat', ["get", "measure"], ' m'],
             "text-size": 18,
             "symbol-placement": "line-center",
             "text-rotation-alignment": "map",
@@ -108,13 +162,45 @@ const addLineLength = (lineString) => {
 draw = new MapboxDraw({
     displayControlsDefault: false,
     controls: {
-        //polygon: true,
+        polygon: true,
         trash: true,
         line_string: true
     }
 })
 
 map.on('load', () => {
+
+    map.on('click', 'jordstykker_fill', (e) => {
+        console.log(e.features[0].properties)
+
+        const areal = e.features[0].properties.registreretareal;
+        const matnr = e.features[0].properties.matrikelnr;
+        new mapboxgl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(`
+            <table>
+                <tr>
+                    <td><b>Matrikelnummer:</b></td>
+                    <td>${matnr}</td>
+                </tr>
+                <tr>
+                    <td><b>Registreret areal:</b></td>
+                    <td>${areal}</td>
+            </tr>
+            <table>
+            `)
+            .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'jordstykker_fill', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'jordstykker_fill', function () {
+        map.getCanvas().style.cursor = '';
+    });
 
     // Add dawa sources
     ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
@@ -156,7 +242,6 @@ map.on('load', () => {
         }
     });
 
-    // Add a black outline around the polygon.
     map.addLayer({
         'id': 'jordstykker',
         'type': 'line',
@@ -165,6 +250,17 @@ map.on('load', () => {
         'paint': {
             'line-color': 'red',
             'line-width': 2
+        }
+    });
+
+    map.addLayer({
+        'id': 'jordstykker_fill',
+        'type': 'fill',
+        'source': 'jordstykker',
+        'layout': {
+        },
+        'paint': {
+            'fill-opacity': 0
         }
     });
 

@@ -20,6 +20,11 @@ html, body {
     background-size: 25px;
 }
 
+.mapbox-gl-draw_polygon {
+    background-image: url('icons/area.svg') !important;
+    background-size: 25px;
+}
+
 .mapbox-gl-draw_trash {
     background-size: 25px;
 }
