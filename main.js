@@ -201,13 +201,13 @@ map.on('load', () => {
     //     map.getCanvas().style.cursor = '';
     // });
 
-    // // Add dawa sources
-    // ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
-    //     map.addSource(source, {
-    //         'type': 'geojson',
-    //         'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
-    //     });
-    // })
+    // Add dawa sources
+    ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
+        map.addSource(source, {
+            'type': 'geojson',
+            'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
+        });
+    })
 
     map.addSource('mose', {
         'type': 'geojson',
