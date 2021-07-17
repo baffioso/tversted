@@ -28,20 +28,21 @@ map.addControl(
 );
 
 const updateDrawing = (e) => {
-    // var style = map.getStyle().layers;
-    // console.log(e, style)
-    var data = draw.getAll();
+    let data = draw.getAll();
+
     if (data.features.length > 0) {
         data.features = data.features.map(i => {
             return { ...i, properties: { length: Math.round(turf.length(i.geometry) * 1000) } }
         })
         console.log(data)
-        // var length = Math.round(turf.length(data) * 1000);
         addLineLength(data)
-        // map.setPaintProperty('gl-draw-line-inactive.hot', 'line-color', 'red');
     } else {
-        if (e.type !== 'draw.delete')
-            alert('Click the map to draw a polygon.');
+        if (e.type === 'draw.delete' && data.features.length === 0) {
+            if (map.getLayer('measure-line-length')) {
+                map.removeLayer('measure-line-length')
+                map.removeSource('measure-line-length')
+            }
+        }
     }
 
 }
@@ -116,6 +117,11 @@ map.on('load', () => {
         'data': './data/vejmidte.geojson'
     });
 
+    map.addSource('adresse', {
+        'type': 'geojson',
+        'data': './data/adresse.geojson'
+    });
+
     // // Add a new layer to visualize the polygon.
     map.addLayer({
         'id': 'bygning',
@@ -176,6 +182,23 @@ map.on('load', () => {
                 "base": 1,
                 "stops": [[13, 12], [14, 13]]
             }
+        },
+        "paint": {
+            "text-color": "white",
+            "text-halo-blur": 0.5,
+            "text-halo-width": 1,
+            "text-halo-color": "rgba(0, 0, 0, 1)"
+
+        }
+    });
+
+    map.addLayer({
+        'id': 'adresse',
+        'type': 'symbol',
+        'source': 'adresse',
+        "layout": {
+            "text-field": "{husnr}",
+            "text-size": 10
         },
         "paint": {
             "text-color": "white",
