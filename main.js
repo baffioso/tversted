@@ -35,6 +35,10 @@ var map = new mapboxgl.Map({
     hash: true
 });
 
+map.addControl(new mapboxgl.NavigationControl({ showZoom: false }));
+map.addControl(new mapboxgl.ScaleControl());
+
+
 // Add geolocate control to the map.
 map.addControl(
     new mapboxgl.GeolocateControl({
