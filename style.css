@@ -32,3 +32,11 @@ html, body {
 .mapboxgl-ctrl button.mapboxgl-ctrl-geolocate .mapboxgl-ctrl-icon {
     background-size: 35px;
 }
+
+.popup-table tr:nth-child(even) {
+    background-color: rgb(238, 238, 238);
+}
+
+.popup-table td {
+    padding: 2px 5px;
+}

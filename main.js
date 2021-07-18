@@ -167,12 +167,37 @@ draw = new MapboxDraw({
 
 map.on('load', () => {
 
+    map.on('click', 'bbr_bygninger', (e) => {
+
+        bbrFeatureHtml(e.features[0])
+
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(bbrFeatureHtml(e.features[0]))
+            .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'bbr_bygninger', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'bbr_bygninger', () => {
+        map.getCanvas().style.cursor = '';
+    });
+
     // Add dawa sources
-    ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
+    ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser',].forEach(source => {
         map.addSource(source, {
             'type': 'geojson',
             'data': `https://api.dataforsyningen.dk/${source}?cirkel=10.226000,57.598860,1000&format=geojson`
         });
+    })
+
+    map.addSource('bbr_bygninger', {
+        type: 'geojson',
+        data: 'https://api.dataforsyningen.dk/bbrlight/bygninger?cirkel=10.226000,57.598860,1000&format=geojson'
     })
 
     map.addSource('mose', {
@@ -243,27 +268,6 @@ map.on('load', () => {
         }
     });
 
-    // map.loadImage(
-    //     "icons/pattern.png",
-    //     (err, image) => {
-    //         // Throw an error if something goes wrong.
-    //         if (err) throw err;
-
-    //         // Add the image to the map style.
-    //         map.addImage('pattern', image);
-
-    //         // Create a new layer and style it using `fill-pattern`.
-    //         map.addLayer({
-    //             'id': 'mose_pattern',
-    //             'type': 'fill',
-    //             'source': 'mose',
-    //             'paint': {
-    //                 'fill-pattern': 'pattern'
-    //             }
-    //         });
-    //     }
-    // );
-
     map.addLayer({
         'id': 'mose_label',
         'type': 'symbol',
@@ -332,8 +336,69 @@ map.on('load', () => {
         minzoom: 14
     });
 
+    map.loadImage(
+        "icons/home.png",
+        (err, image) => {
+            // Throw an error if something goes wrong.
+            if (err) throw err;
+
+            // Add the image to the map style.
+            map.addImage('home', image);
+
+            // Create a new layer and style it using `fill-pattern`.
+            map.addLayer({
+                'id': 'bbr_bygninger',
+                'type': 'symbol',
+                'source': 'bbr_bygninger', // reference the data source
+                'layout': {
+                    'icon-image': 'home',
+                    'icon-size': 0.07
+                },
+                'paint': {},
+                minzoom: 18
+            });
+        }
+    );
+
     map.addControl(draw, 'top-left');
     map.on('draw.create', updateDrawing);
     map.on('draw.delete', updateDrawing);
     map.on('draw.update', updateDrawing);
 });
+
+const bbrFeatureHtml = (feature) => {
+
+    const allowedProps = [
+        'ETAGER_ANT',
+        'BYG_BEBYG_ARL',
+        'ERHV_ARL_SAML',
+        'BYG_BOLIG_ARL_SAML',
+        'BYG_ARL_SAML',
+        'BYG_ANVEND_KODE',
+        'BYG_AFLOEB_TILL',
+        'BYG_AFLOEB_KODE',
+        'YDERVAEG_KODE',
+        'TAG_KODE'
+    ]
+
+    const props = Object.keys(feature.properties)
+        .filter(key => allowedProps.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = feature.properties[key];
+            return obj;
+        }, {});
+
+    let html = '<table class="popup-table">'
+    for (const key in props) {
+        html += `
+        <tr>
+            <td>${key}</td>
+            <td>${props[key]}</td>
+        </tr>
+        `
+    }
+    html += '</table>'
+
+    return html
+
+}
