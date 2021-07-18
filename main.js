@@ -231,23 +231,18 @@ map.on('load', () => {
     });
 
     map.addLayer({
-        'id': 'mose',
-        'type': 'fill',
-        'source': 'mose', // reference the data source
-        'layout': {},
-        'paint': {
-            'fill-color': 'brown', // blue color fill
-            'fill-opacity': 0.6
-        }
-    });
-
-    map.addLayer({
         'id': 'jordstykker',
         'type': 'line',
         'source': 'jordstykker',
         'layout': {},
         'paint': {
-            'line-color': 'red',
+            'line-color': [
+                "match",
+                ["get", "matrikelnr"],
+                "94b",
+                "#2d5aff",
+                "red"
+            ],
             'line-width': 2
         }
     });
@@ -259,7 +254,27 @@ map.on('load', () => {
         'layout': {
         },
         'paint': {
-            'fill-opacity': 0
+            // 'fill-paint': 'black',
+            'fill-opacity': [
+                "match",
+                ["get", "matrikelnr"],
+                "94b",
+                0,
+                "94ap",
+                0,
+                0.3
+            ]
+        }
+    });
+
+    map.addLayer({
+        'id': 'mose',
+        'type': 'fill',
+        'source': 'mose', // reference the data source
+        'layout': {},
+        'paint': {
+            'fill-color': 'brown', // blue color fill
+            'fill-opacity': 0.6
         }
     });
 
