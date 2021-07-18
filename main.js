@@ -168,9 +168,13 @@ draw = new MapboxDraw({
 map.on('load', () => {
 
     map.on('click', 'bbr_bygninger', (e) => {
+        new maplibregl.Popup()
+            .setLngLat(e.lngLat)
+            .setHTML(bbrFeatureHtml(e.features[0]))
+            .addTo(map);
+    });
 
-        bbrFeatureHtml(e.features[0])
-
+    map.on('touchend', 'bbr_bygninger', (e) => {
         new maplibregl.Popup()
             .setLngLat(e.lngLat)
             .setHTML(bbrFeatureHtml(e.features[0]))
