@@ -245,6 +245,20 @@ map.on('load', () => {
     });
 
     map.addLayer({
+        'id': 'mose_label',
+        'type': 'symbol',
+        'source': 'mose',
+        "layout": {
+            "text-field": "Mose",
+            "text-size": 11
+        },
+        "paint": {
+            "text-color": "white"
+        }
+    });
+
+
+    map.addLayer({
         'id': 'vej',
         'type': 'line',
         'source': 'vejmidte',
