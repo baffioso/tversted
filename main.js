@@ -220,7 +220,6 @@ map.on('load', () => {
         'layout': {
         },
         'paint': {
-            // 'fill-paint': 'black',
             'fill-opacity': [
                 "match",
                 ["get", "matrikelnr"],
@@ -244,6 +243,27 @@ map.on('load', () => {
         }
     });
 
+    // map.loadImage(
+    //     "icons/pattern.png",
+    //     (err, image) => {
+    //         // Throw an error if something goes wrong.
+    //         if (err) throw err;
+
+    //         // Add the image to the map style.
+    //         map.addImage('pattern', image);
+
+    //         // Create a new layer and style it using `fill-pattern`.
+    //         map.addLayer({
+    //             'id': 'mose_pattern',
+    //             'type': 'fill',
+    //             'source': 'mose',
+    //             'paint': {
+    //                 'fill-pattern': 'pattern'
+    //             }
+    //         });
+    //     }
+    // );
+
     map.addLayer({
         'id': 'mose_label',
         'type': 'symbol',
@@ -254,7 +274,8 @@ map.on('load', () => {
         },
         "paint": {
             "text-color": "white"
-        }
+        },
+        minzoom: 15
     });
 
 
@@ -307,7 +328,8 @@ map.on('load', () => {
             "text-halo-width": 1,
             "text-halo-color": "rgba(0, 0, 0, 1)"
 
-        }
+        },
+        minzoom: 14
     });
 
     map.addControl(draw, 'top-left');
