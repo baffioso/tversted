@@ -16,12 +16,12 @@ html, body {
 }
 
 .mapbox-gl-draw_line {
-    background-image: url('icons/ruler.svg') !important;
+    background-image: url('icons/ruler.svg');
     background-size: 25px;
 }
 
 .mapbox-gl-draw_polygon {
-    background-image: url('icons/area.svg') !important;
+    background-image: url('icons/area.svg');
     background-size: 25px;
 }
 
