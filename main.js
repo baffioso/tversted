@@ -1,8 +1,4 @@
-let satellite = true
-
-mapboxgl.accessToken = 'pk.eyJ1IjoiYmFmZmlvc28iLCJhIjoiT1JTS1lIMCJ9.f5ubY91Bi42yPnTrgiq-Gw';
-
-var map = new mapboxgl.Map({
+var map = new maplibregl.Map({
     container: 'map', // container ID
     style: {
         version: 8,
@@ -31,17 +27,18 @@ var map = new mapboxgl.Map({
         ]
     },
     center: [10.226000, 57.598860], // starting position [lng, lat]
-    zoom: 16, // starting zoom
-    hash: true
+    zoom: 15,
+    hash: true,
+    accessToken: 'pk.eyJ1IjoiYmFmZmlvc28iLCJhIjoiT1JTS1lIMCJ9.f5ubY91Bi42yPnTrgiq-Gw'
 });
 
-map.addControl(new mapboxgl.NavigationControl({ showZoom: false }));
-map.addControl(new mapboxgl.ScaleControl());
+map.addControl(new maplibregl.NavigationControl({ showZoom: false }));
+map.addControl(new maplibregl.ScaleControl());
 
 
 // Add geolocate control to the map.
 map.addControl(
-    new mapboxgl.GeolocateControl({
+    new maplibregl.GeolocateControl({
         positionOptions: {
             enableHighAccuracy: true
         },
@@ -52,7 +49,7 @@ map.addControl(
 );
 
 map.addControl(
-    new mapboxgl.FullscreenControl(),
+    new maplibregl.FullscreenControl(),
     'bottom-right'
 );
 
@@ -169,37 +166,6 @@ draw = new MapboxDraw({
 })
 
 map.on('load', () => {
-
-    // map.on('click', 'jordstykker_fill', (e) => {
-
-    //     const areal = e.features[0].properties.registreretareal;
-    //     const matnr = e.features[0].properties.matrikelnr;
-    //     new mapboxgl.Popup()
-    //         .setLngLat(e.lngLat)
-    //         .setHTML(`
-    //         <table>
-    //             <tr>
-    //                 <td><b>Matrikelnummer:</b></td>
-    //                 <td>${matnr}</td>
-    //             </tr>
-    //             <tr>
-    //                 <td><b>Registreret areal:</b></td>
-    //                 <td>${areal}</td>
-    //         </tr>
-    //         <table>
-    //         `)
-    //         .addTo(map);
-    // });
-
-    // Change the cursor to a pointer when the mouse is over the places layer.
-    // map.on('mouseenter', 'jordstykker_fill', function () {
-    //     map.getCanvas().style.cursor = 'pointer';
-    // });
-
-    // // Change it back to a pointer when it leaves.
-    // map.on('mouseleave', 'jordstykker_fill', function () {
-    //     map.getCanvas().style.cursor = '';
-    // });
 
     // Add dawa sources
     ['jordstykker', 'bygninger', 'vejstykker', 'adgangsadresser'].forEach(source => {
