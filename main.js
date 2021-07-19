@@ -356,7 +356,7 @@ map.on('load', () => {
                 'source': 'bbr_bygninger', // reference the data source
                 'layout': {
                     'icon-image': 'home',
-                    'icon-size': 0.2
+                    'icon-size': 0.15
                 },
                 'paint': {},
                 minzoom: 18
