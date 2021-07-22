@@ -391,7 +391,7 @@ map.on('load', () => {
     });
 
     map.loadImage(
-        "icons/home.png",
+        "icons/hus.png",
         (err, image) => {
             // Throw an error if something goes wrong.
             if (err) throw err;
@@ -406,7 +406,7 @@ map.on('load', () => {
                 'source': 'bbr_bygninger', // reference the data source
                 'layout': {
                     'icon-image': 'home',
-                    'icon-size': 0.07
+                    'icon-size': 0.15
                 },
                 'paint': {},
                 minzoom: 18
