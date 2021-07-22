@@ -204,6 +204,11 @@ map.on('load', () => {
         data: 'https://api.dataforsyningen.dk/bbrlight/bygninger?cirkel=10.226000,57.598860,1000&format=geojson'
     })
 
+    map.addSource('byggefelt', {
+        'type': 'geojson',
+        'data': './data/byggefelt.geojson'
+    });
+
     map.addSource('mose', {
         'type': 'geojson',
         'data': './data/mose.geojson'
@@ -336,6 +341,16 @@ map.on('load', () => {
         minzoom: 15
     });
 
+    map.addLayer({
+        'id': 'byggefelt',
+        'type': 'fill',
+        'source': 'byggefelt',
+        'layout': {},
+        'paint': {
+            'fill-color': 'rgb(255, 165, 0)',
+            'fill-opacity': 0.4
+        }
+    });
 
     map.addLayer({
         'id': 'vej',
