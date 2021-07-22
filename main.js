@@ -243,6 +243,17 @@ map.on('load', () => {
     });
 
     map.addLayer({
+        'id': 'byggefelt',
+        'type': 'fill',
+        'source': 'byggefelt',
+        'layout': {},
+        'paint': {
+            'fill-color': 'rgb(255, 165, 0)',
+            'fill-opacity': 0.4
+        }
+    });
+
+    map.addLayer({
         'id': 'contour',
         'type': 'line',
         'source': 'contour',
@@ -339,17 +350,6 @@ map.on('load', () => {
             "text-color": "white"
         },
         minzoom: 15
-    });
-
-    map.addLayer({
-        'id': 'byggefelt',
-        'type': 'fill',
-        'source': 'byggefelt',
-        'layout': {},
-        'paint': {
-            'fill-color': 'rgb(255, 165, 0)',
-            'fill-opacity': 0.4
-        }
     });
 
     map.addLayer({
