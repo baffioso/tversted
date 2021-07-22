@@ -269,7 +269,7 @@ map.on('load', () => {
             "text-anchor": "center",
             "text-field": "{hoejde}",
             "text-offset": [0, 0.15],
-            "text-size": 10,
+            "text-size": 12,
         },
         "paint": {
             "text-color": "white",
