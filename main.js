@@ -1,31 +1,6 @@
 var map = new maplibregl.Map({
     container: 'map', // container ID
-    style: {
-        version: 8,
-        glyphs: "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
-        sources: {
-            orto: {
-                type: 'raster',
-                tiles: [
-                    'https://services.datafordeler.dk/GeoDanmarkOrto/orto_foraar/1.0.0/WMS?username=DTMMBNXGMB&password=LvA$*001&VERSION=1.1.1&REQUEST=GetMap&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=orto_foraar&STYLES=&FORMAT=image/jpeg'
-                ],
-                tileSize: 256
-            }
-        },
-        layers: [
-            {
-                id: 'orto',
-                type: 'raster',
-                source: 'orto',
-                paint: {
-                    'raster-opacity': 1
-                },
-                layout: {
-                    visibility: 'visible'
-                }
-            }
-        ]
-    },
+    style: 'style.json',
     center: [10.226000, 57.598860], // starting position [lng, lat]
     zoom: 15,
     hash: true,

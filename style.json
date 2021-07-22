@@ -1,0 +1,88 @@
+{
+    "version": 8,
+    "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+    "sources": {
+        "orto": {
+            "type": "raster",
+            "tiles": [
+                "https://services.datafordeler.dk/GeoDanmarkOrto/orto_foraar/1.0.0/WMS?username=DTMMBNXGMB&password=LvA$*001&VERSION=1.1.1&REQUEST=GetMap&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=orto_foraar&STYLES=&FORMAT=image/jpeg"
+            ],
+            "tileSize": 256
+        },
+        "hillshade": {
+            "type": "raster",
+            "tiles": [
+                "https://services.datafordeler.dk/DHMNedboer/dhm/1.0.0/WMS?username=DTMMBNXGMB&password=LvA$*001&VERSION=1.1.1&REQUEST=GetMap&BBOX={bbox-epsg-3857}&SRS=EPSG:3857&WIDTH=256&HEIGHT=256&LAYERS=dhm_terraen_skyggekort&STYLES=&FORMAT=image/jpeg"
+            ]
+        },
+        "skaermkort": {
+            "type": "raster",
+            "tiles": [
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+            ],
+            "tileSize": 256
+        }
+    },
+    "layers": [
+        {
+            "id": "hillshade",
+            "type": "raster",
+            "source": "hillshade",
+            "paint": {
+                "raster-opacity": 1
+            },
+            "layout": {
+                "visibility": "visible"
+            },
+            "minzoom": 17
+        },
+        {
+            "id": "orto",
+            "type": "raster",
+            "source": "orto",
+            "paint": {
+                "raster-opacity": [
+                    "interpolate",
+                    [
+                        "linear"
+                    ],
+                    [
+                        "zoom"
+                    ],
+                    17,
+                    1,
+                    19,
+                    0.4
+                ]
+            },
+            "layout": {
+                "visibility": "visible"
+            },
+            "minzoom": 14
+        },
+        {
+            "id": "skaermkort",
+            "type": "raster",
+            "source": "skaermkort",
+            "paint": {
+                "raster-opacity": [
+                    "interpolate",
+                    [
+                        "linear"
+                    ],
+                    [
+                        "zoom"
+                    ],
+                    15,
+                    1,
+                    16,
+                    0
+                ]
+            },
+            "layout": {
+                "visibility": "visible"
+            },
+            "maxzoom": 16
+        }
+    ]
+}
