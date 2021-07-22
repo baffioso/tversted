@@ -209,20 +209,15 @@ map.on('load', () => {
         'data': './data/mose.geojson'
     });
 
+    map.addSource('contour', {
+        'type': 'geojson',
+        'data': './data/contour.geojson'
+    });
+
+
     map.addSource('vejmidte', {
         'type': 'geojson',
         'data': './data/vejmidte.geojson'
-    });
-
-    map.addLayer({
-        'id': 'bygninger',
-        'type': 'fill',
-        'source': 'bygninger', // reference the data source
-        'layout': {},
-        'paint': {
-            'fill-color': 'green', // blue color fill
-            'fill-opacity': 0.6
-        }
     });
 
     map.addLayer({
@@ -239,6 +234,61 @@ map.on('load', () => {
                 "red"
             ],
             'line-width': 2
+        }
+    });
+
+    map.addLayer({
+        'id': 'contour',
+        'type': 'line',
+        'source': 'contour',
+        'layout': {},
+        'paint': {
+            'line-color': 'white',
+            'line-width': [
+                "match",
+                ["%", ["get", "hoejde"], 1],
+                0,
+                0.7,
+                0.4
+            ],
+            'line-opacity': [
+                "interpolate", ["linear"], ["zoom"],
+                16, 0,
+                17, 1
+            ]
+        },
+        minzoom: 16
+    });
+
+    map.addLayer({
+        'id': 'contour_label',
+        'type': 'symbol',
+        'source': 'contour',
+        "layout": {
+            "symbol-placement": "line",
+            "text-anchor": "center",
+            "text-field": "{hoejde}",
+            "text-offset": [0, 0.15],
+            "text-size": 10,
+        },
+        "paint": {
+            "text-color": "white",
+            "text-halo-blur": 0.5,
+            "text-halo-width": 1,
+            "text-halo-color": "rgba(0, 0, 0, 1)"
+
+        },
+        minzoom: 17
+    });
+
+    map.addLayer({
+        'id': 'bygninger',
+        'type': 'fill',
+        'source': 'bygninger', // reference the data source
+        'layout': {},
+        'paint': {
+            'fill-color': 'green', // blue color fill
+            'fill-opacity': 0.6
         }
     });
 
